@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:weightSum="1">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:text="http://"
+        android:id="@+id/textEdit"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.87"
+        android:textSize="35dp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageButton"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_plus"
+        android:background="@android:color/transparent" />
+
+</LinearLayout>

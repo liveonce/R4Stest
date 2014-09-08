@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">R4STest</string>
+    <string name="menu_title">Menu</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="drawer_open">Menu otwarte</string>
+    <string name="drawer_close">Menu zamknięte</string>
+
+    <string name="welcome">Zadanie testowe ready4s.</string>
+    <string name="sign">Michał Kasza</string>
+
+    <string name="shorturl">shorturl</string>
+
+    <string-array name="nav_drawer_items">
+        <item >Start</item>
+        <item >Skróć link</item>
+        <item >Wyświetl bazę</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_cut</item>
+        <item>@drawable/ic_database</item>
+    </array>
+
+    <string name="desc_list_item_icon">ic</string>
+
+</resources>
