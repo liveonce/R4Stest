@@ -33,12 +33,13 @@ import pl.michalkasza.r4stest.model.Link;
 
 public class ShrinkFragment extends Fragment implements View.OnClickListener {
 
-    String final_URL, shrinked_URL, base_URL = "http://to.ly/api.php?&longurl=";
+    String final_URL, base_URL = "http://to.ly/api.php?&longurl=";
     EditText edited_URL;
     ImageButton button;
     MySQLiteHelper db;
     Toast mToast;
     boolean online = true;
+
     public ShrinkFragment() {
     }
 
@@ -90,6 +91,7 @@ public class ShrinkFragment extends Fragment implements View.OnClickListener {
     private class AsyncDbWriteTask extends AsyncTask<String, Void, String>{
         protected String doInBackground(String... values) {
             String editedtmp_URL = values[0];
+            String shrinked_URL = values[1];
 
             try {
                 do{
@@ -113,7 +115,7 @@ public class ShrinkFragment extends Fragment implements View.OnClickListener {
 
     }
     private class AsyncRequestTask extends AsyncTask<String, Void, Boolean> {
-        String editedtmp_URL;
+        String editedtmp_URL, shrinked_URL;
         protected Boolean doInBackground(String... values) {
             boolean shrink_success = false;
             String query_URL = values[0];
@@ -154,7 +156,7 @@ public class ShrinkFragment extends Fragment implements View.OnClickListener {
                 showToast("Nieprawidłowy link :(");
             } else {
                 AsyncDbWriteTask push = new AsyncDbWriteTask();
-                push.execute(editedtmp_URL);
+                push.execute(editedtmp_URL, shrinked_URL);
             }
         }
     }
