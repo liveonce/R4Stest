@@ -7,23 +7,28 @@
     <string name="drawer_open">Menu otwarte</string>
     <string name="drawer_close">Menu zamknięte</string>
 
-    <string name="welcome">Zadanie testowe ready4s.</string>
-    <string name="sign">Michał Kasza</string>
+    <string name="clear">Wyczyść listę</string>
+
+    <string name="powitanie">Aplikacja testowa dla Ready4S.</string>
+    <string name="podpis">Michał Kasza</string>
 
     <string name="shorturl">shorturl</string>
-
+    <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
         <item >Start</item>
         <item >Skróć link</item>
         <item >Wyświetl bazę</item>
     </string-array>
 
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
         <item>@drawable/ic_cut</item>
         <item>@drawable/ic_database</item>
     </array>
 
-    <string name="desc_list_item_icon">ic</string>
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Ikona</string>
 
 </resources>

@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageButton"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_plus"
+        android:src="@drawable/btn_add"
         android:background="@android:color/transparent" />
 
 </LinearLayout>

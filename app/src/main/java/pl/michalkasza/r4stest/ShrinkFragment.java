@@ -1,6 +1,10 @@
 package pl.michalkasza.r4stest;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,12 +33,12 @@ import pl.michalkasza.r4stest.model.Link;
 
 public class ShrinkFragment extends Fragment implements View.OnClickListener {
 
-    String bad_MSG, final_URL, shrinked_URL, base_URL = "http://to.ly/api.php?&longurl=";
+    String final_URL, shrinked_URL, base_URL = "http://to.ly/api.php?&longurl=";
     EditText edited_URL;
     ImageButton button;
     MySQLiteHelper db;
-    Toast m_currentToast;
-
+    Toast mToast;
+    boolean online = true;
     public ShrinkFragment() {
     }
 
@@ -53,34 +57,44 @@ public class ShrinkFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         final_URL = base_URL + edited_URL.getText();
-        bad_MSG = "Invalid URL: " + edited_URL;
 
-        AsyncRequestTask get = new AsyncRequestTask();
-        get.execute(final_URL, bad_MSG);
-        showToast("Przetwarzanie w trakcie... ");
-//      AsyncDbWriteTask push = new AsyncDbWriteTask();
-//      push.execute(edited_URL.getText().toString());
-    }
-
-    void showToast(String text)
-    {
-        if(m_currentToast == null)
-        {
-            m_currentToast = Toast.makeText(this.getActivity(), text, Toast.LENGTH_LONG);
+        online = isOnline();
+        if (online == true) {
+            AsyncRequestTask get = new AsyncRequestTask();
+            get.execute(final_URL, edited_URL.getText().toString());
+            showToast("Przetwarzanie w trakcie...");
+        } else {
+            new AlertDialog.Builder(this.getActivity()).setTitle("Brak połączenia z internetem").setMessage("Akcja została przerwana").setIcon(R.drawable.ic_alert).setNeutralButton("Zamknij", null).show();
         }
-        m_currentToast.setText(text);
-        m_currentToast.setDuration(Toast.LENGTH_LONG);
-        m_currentToast.show();
     }
 
-    private class AsyncDbWriteTask extends AsyncTask<String, Void, Void>{
-        protected Void doInBackground(String... values) {
-            String temped_URL = values[0];
+    void showToast(String text) {
+        if(mToast == null) {
+            mToast = Toast.makeText(this.getActivity(), text, Toast.LENGTH_LONG);
+        }
+        mToast.setText(text);
+        mToast.setDuration(Toast.LENGTH_LONG);
+        mToast.show();
+    }
+
+    boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
+    }
+
+    private class AsyncDbWriteTask extends AsyncTask<String, Void, String>{
+        protected String doInBackground(String... values) {
+            String editedtmp_URL = values[0];
 
             try {
                 do{
                     if(shrinked_URL != null)
-                        db.addLink(new Link(temped_URL, shrinked_URL));
+                        db.addLink(new Link(editedtmp_URL, shrinked_URL));
                     else
                         try {
                             Thread.sleep(100);
@@ -91,12 +105,19 @@ public class ShrinkFragment extends Fragment implements View.OnClickListener {
             }catch(Exception e){
                 Log.e("AsyncDbWrite", "Add'n Error");
             }
-            return null;
+            return editedtmp_URL;
         }
+        protected void onPostExecute(String editedtmp_URL) {
+            showToast("Skrót " + editedtmp_URL + " dodany do bazy! :)");
+        }
+
     }
-    private class AsyncRequestTask extends AsyncTask<String, Void, Void> {
-        protected Void doInBackground(String... values) {
+    private class AsyncRequestTask extends AsyncTask<String, Void, Boolean> {
+        String editedtmp_URL;
+        protected Boolean doInBackground(String... values) {
+            boolean shrink_success = false;
             String query_URL = values[0];
+            editedtmp_URL = values[1];
             try {
                 ArrayList<NameValuePair> nvp = new ArrayList<NameValuePair>();
                 HttpClient http_Client = new DefaultHttpClient();
@@ -117,18 +138,24 @@ public class ShrinkFragment extends Fragment implements View.OnClickListener {
                 shrinked_URL = sb.toString();
                 Log.v("Getter:", "Shrinked link: " + shrinked_URL);
             } catch (Exception e) {
-                Log.e("AsyncHTTPRequest: ", "Error");
+                Log.e("AsyncHTTPRequest:", "Error");
             }
 
             if(shrinked_URL.startsWith("Invalid")) {
-//                showToast("Niepoprawny adres :(");
+                shrink_success = false;
             }
             else {
-                AsyncDbWriteTask push = new AsyncDbWriteTask();
-                push.execute(edited_URL.getText().toString());
-//                showToast("Skrót dodany do bazy! :) ");
+                shrink_success = true;
             }
-            return null;
+            return shrink_success;
+        }
+        protected void onPostExecute(Boolean shrink_success){
+            if (shrink_success == false) {
+                showToast("Nieprawidłowy link :(");
+            } else {
+                AsyncDbWriteTask push = new AsyncDbWriteTask();
+                push.execute(editedtmp_URL);
+            }
         }
     }
 }
